@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f5f0e8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Gás" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <title>Controle de Gás</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ======================================================
+       LOADING
+  ====================================================== -->
+      <div id="screen-loading" class="loading-screen">
+        <div class="spinner"></div>
+        <p class="loading-text">carregando...</p>
+      </div>
+
+      <!-- ======================================================
+       AUTH
+  ====================================================== -->
+      <div id="screen-auth" class="auth-screen" style="display: none">
+        <div class="auth-logo">🔥</div>
+        <h1 class="auth-title">Controle de Gás</h1>
+        <p class="auth-subtitle">
+          Saiba quando comprar antes de ficar no frio — ou sem banho.
+        </p>
+
+        <div id="auth-step-email" style="width: 100%">
+          <div class="auth-card">
+            <p class="auth-card-title">Entre com seu e-mail</p>
+            <div class="form-group" style="margin-bottom: 14px">
+              <input
+                id="auth-email"
+                class="form-input"
+                type="email"
+                placeholder="seu@email.com"
+                autocomplete="email"
+              />
+            </div>
+            <button id="btn-magic-link" class="btn-primary">
+              Enviar link de acesso ✉️
+            </button>
+          </div>
+          <p
+            style="
+              font-size: 13px;
+              font-weight: 600;
+              color: var(--text-subtle);
+              text-align: center;
+              margin-top: 10px;
+            "
+          >
+            Sem senha. Um link chega no e-mail.
+          </p>
+        </div>
+
+        <div id="auth-step-sent" style="display: none; width: 100%">
+          <div class="auth-card magic-sent">
+            <div class="magic-sent-icon">📬</div>
+            <p class="magic-sent-title">Link enviado!</p>
+            <p class="magic-sent-text">
+              Abra o e-mail no seu celular e toque no link para entrar.<br /><br />
+              A sessão fica ativa por meses — você não precisará fazer isso de
+              novo.
+            </p>
+          </div>
+          <button class="btn-secondary" id="btn-back-email">
+            ← Tentar outro e-mail
+          </button>
+        </div>
+      </div>
+
+      <!-- ======================================================
+       ONBOARDING
+  ====================================================== -->
+      <div id="screen-onboarding" style="display: none">
+        <div class="auth-screen">
+          <div class="auth-logo">🏠</div>
+          <h1 class="auth-title" style="font-size: 26px">Configure sua casa</h1>
+          <p class="auth-subtitle">
+            Crie uma casa nova ou entre numa já existente.
+          </p>
+
+          <div class="auth-card">
+            <p class="auth-card-title">✨ Criar minha casa</p>
+            <p
+              style="
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--text-muted);
+                margin-bottom: 16px;
+                line-height: 1.5;
+              "
+            >
+              Você recebe um código para compartilhar com seu namorado.
+            </p>
+            <div class="form-group" style="margin-bottom: 14px">
+              <label class="form-label">Seu nome</label>
+              <input
+                id="onboard-nome-criar"
+                class="form-input"
+                type="text"
+                placeholder="Ex: Júlia"
+              />
+            </div>
+            <button id="btn-criar-household" class="btn-primary">
+              Criar casa
+            </button>
+          </div>
+
+          <div class="auth-divider">— ou —</div>
+
+          <div class="auth-card">
+            <p class="auth-card-title">🔗 Entrar numa casa existente</p>
+            <p
+              style="
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--text-muted);
+                margin-bottom: 16px;
+                line-height: 1.5;
+              "
+            >
+              Insira o código que a outra pessoa te mandou.
+            </p>
+            <div class="form-group" style="margin-bottom: 10px">
+              <label class="form-label">Seu nome</label>
+              <input
+                id="onboard-nome-entrar"
+                class="form-input"
+                type="text"
+                placeholder="Ex: João"
+                style="margin-bottom: 10px"
+              />
+              <label class="form-label">Código de convite</label>
+              <input
+                id="onboard-codigo"
+                class="form-input"
+                type="text"
+                placeholder="GAS-XXXX"
+                autocomplete="off"
+                style="text-transform: uppercase; letter-spacing: 0.1em"
+              />
+            </div>
+            <button
+              id="btn-entrar-household"
+              class="btn-primary"
+              style="margin-top: 6px"
+            >
+              Entrar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+       INVITE CODE
+  ====================================================== -->
+      <div id="screen-invite" style="display: none">
+        <div class="auth-screen">
+          <div class="auth-logo">🎉</div>
+          <h1 class="auth-title">Casa criada!</h1>
+          <p class="auth-subtitle">
+            Compartilhe o código com seu namorado para ele entrar.
+          </p>
+
+          <div class="auth-card" style="width: 100%">
+            <p class="auth-card-title">Código de convite</p>
+            <div
+              class="invite-code-display"
+              id="invite-code-display"
+              title="Toque para copiar"
+            ></div>
+            <p class="invite-hint">Toque no código para copiar 👆</p>
+          </div>
+
+          <button
+            id="btn-invite-continuar"
+            class="btn-primary"
+            style="width: 100%; margin-top: 20px"
+          >
+            Ir para o app →
+          </button>
+        </div>
+      </div>
+
+      <!-- ======================================================
+       APP PRINCIPAL
+  ====================================================== -->
+      <div
+        id="screen-app"
+        style="display: none; flex-direction: column; flex: 1"
+      >
+        <!-- Header -->
+        <header class="app-header">
+          <div class="app-logo">
+            <div class="logo-icon">⛽</div>
+            <span class="logo-text">Gás em casa</span>
+          </div>
+          <button class="header-action" id="btn-signout" title="Sair">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </header>
+
+        <!-- ============ DASHBOARD ============ -->
+        <section id="tab-dashboard" class="screen active">
+          <!-- Hero card -->
+          <div class="hero-card" id="hero-card">
+            <div>
+              <p class="hero-greeting">Olá! 👋</p>
+              <p class="hero-title" id="hero-title">Tudo sob<br />controle!</p>
+            </div>
+            <span class="hero-emoji" id="hero-emoji">😌</span>
+          </div>
+
+          <p class="section-label">Botijões ativos</p>
+
+          <div class="cards-grid">
+            <!-- Chuveiro -->
+            <div class="botijao-card status-inativo" id="card-chuveiro">
+              <div class="card-header">
+                <div class="card-title">
+                  <div
+                    class="card-icon-wrap"
+                    style="background: rgba(88, 150, 255, 0.12)"
+                  >
+                    🚿
+                  </div>
+                  <span class="card-name">Chuveiro</span>
+                </div>
+                <span class="card-badge badge-inativo" id="badge-chuveiro"
+                  >sem dados</span
+                >
+              </div>
+              <div class="card-previsao" id="previsao-chuveiro">
+                —<span class="card-previsao-unit"></span>
+              </div>
+              <div class="card-detail" id="detail-chuveiro">
+                Registre a instalação para começar
+              </div>
+              <div class="card-confianca" id="confianca-chuveiro"></div>
+              <div
+                class="progress-wrap"
+                id="progress-wrap-chuveiro"
+                style="display: none"
+              >
+                <div class="progress-labels">
+                  <span id="prog-label-left-chuveiro">instalado</span>
+                  <span id="prog-label-right-chuveiro">estimativa</span>
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="prog-fill-chuveiro"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cozinha -->
+            <div class="botijao-card status-inativo" id="card-cozinha">
+              <div class="card-header">
+                <div class="card-title">
+                  <div
+                    class="card-icon-wrap"
+                    style="background: rgba(122, 158, 126, 0.15)"
+                  >
+                    🍳
+                  </div>
+                  <span class="card-name">Cozinha</span>
+                </div>
+                <span class="card-badge badge-inativo" id="badge-cozinha"
+                  >sem dados</span
+                >
+              </div>
+              <div class="card-previsao" id="previsao-cozinha">
+                —<span class="card-previsao-unit"></span>
+              </div>
+              <div class="card-detail" id="detail-cozinha">
+                Registre a instalação para começar
+              </div>
+              <div class="card-confianca" id="confianca-cozinha"></div>
+              <div
+                class="progress-wrap"
+                id="progress-wrap-cozinha"
+                style="display: none"
+              >
+                <div class="progress-labels">
+                  <span id="prog-label-left-cozinha">instalado</span>
+                  <span id="prog-label-right-cozinha">estimativa</span>
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="prog-fill-cozinha"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reserva -->
+            <div class="reserva-card" id="card-reserva">
+              <div
+                class="reserva-icon-wrap"
+                id="reserva-icon-wrap"
+                style="background: rgba(122, 158, 126, 0.15)"
+              >
+                🛢️
+              </div>
+              <div class="reserva-info">
+                <div class="reserva-label">Botijão reserva</div>
+                <div class="reserva-status" id="reserva-status-text">—</div>
+              </div>
+            </div>
+          </div>
+
+          <p class="last-update" id="last-update-text"></p>
+        </section>
+
+        <!-- ============ REGISTRAR ============ -->
+        <section id="tab-registrar" class="screen">
+          <div class="register-screen">
+            <h2 class="register-title">Registrar</h2>
+            <p class="register-subtitle">O que aconteceu hoje?</p>
+
+            <div class="action-grid">
+              <button class="action-btn" data-action="comprou">
+                <span class="action-btn-icon">🛒</span>
+                <span class="action-btn-label">Comprei o reserva</span>
+                <span class="action-btn-desc">Botijão chegou em casa</span>
+              </button>
+              <button class="action-btn" data-action="instalou">
+                <span class="action-btn-icon">🔧</span>
+                <span class="action-btn-label">Instalei o reserva</span>
+                <span class="action-btn-desc"
+                  >Troquei no chuveiro ou cozinha</span
+                >
+              </button>
+              <button class="action-btn" data-action="comprouInstalou">
+                <span class="action-btn-icon">⚡</span>
+                <span class="action-btn-label">Comprei e instalei</span>
+                <span class="action-btn-desc">Sem reserva, direto no uso</span>
+              </button>
+              <button class="action-btn" data-action="terminou">
+                <span class="action-btn-icon">💨</span>
+                <span class="action-btn-label">Acabou o gás</span>
+                <span class="action-btn-desc">Ficou vazio sem reserva</span>
+              </button>
+            </div>
+
+            <div class="form-context" id="form-context">
+              <div class="form-group" id="field-local" style="display: none">
+                <label class="form-label">Qual botijão?</label>
+                <div class="local-buttons">
+                  <button class="local-btn" data-local="chuveiro">
+                    🚿 Chuveiro
+                  </button>
+                  <button class="local-btn" data-local="cozinha">
+                    🍳 Cozinha
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group" id="field-data">
+                <label class="form-label">Data</label>
+                <input class="form-input" type="date" id="reg-data" />
+              </div>
+
+              <div class="form-group" id="field-obs" style="display: none">
+                <label class="form-label">Observação (opcional)</label>
+                <input
+                  class="form-input"
+                  type="text"
+                  id="reg-obs"
+                  placeholder="Ex: botijão de 13 kg"
+                />
+              </div>
+
+              <button class="btn-primary" id="btn-confirmar" disabled>
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ HISTÓRICO ============ -->
+        <section id="tab-historico" class="screen">
+          <p class="section-label">Estatísticas</p>
+
+          <div class="history-screen">
+            <div class="chart-wrap">
+              <p class="chart-title">Duração média por mês (dias)</p>
+              <canvas id="chart-sazonal" height="160"></canvas>
+            </div>
+
+            <div class="insight-card" id="insight-card" style="display: none">
+              <span class="insight-icon">🔥</span>
+              <span id="insight-text"></span>
+            </div>
+
+            <p class="section-label" style="padding: 0 0 10px">
+              Ciclos registrados
+            </p>
+            <div class="cycles-list" id="cycles-list">
+              <p
+                style="
+                  color: var(--text-subtle);
+                  font-size: 14px;
+                  font-weight: 600;
+                  text-align: center;
+                  padding: 24px 0;
+                "
+              >
+                Nenhum ciclo completo ainda.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Nav bottom -->
+        <nav class="bottom-nav">
+          <button class="nav-btn active" data-tab="dashboard">
+            <div class="nav-icon-wrap"><span class="nav-icon">🏠</span></div>
+            <span>Início</span>
+          </button>
+          <button class="nav-btn" data-tab="registrar">
+            <div class="nav-icon-wrap"><span class="nav-icon">✏️</span></div>
+            <span>Registrar</span>
+          </button>
+          <button class="nav-btn" data-tab="historico">
+            <div class="nav-icon-wrap"><span class="nav-icon">📊</span></div>
+            <span>Histórico</span>
+          </button>
+        </nav>
+      </div>
+      <!-- /screen-app -->
+    </div>
+    <!-- /app -->
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
